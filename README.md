@@ -305,18 +305,3 @@ external/
 shaderkit/          shader replacement — no compiler needed
 docs/
 ```
-
-VanGFX and MWSDK are opt-in per plugin, because neither is small and most
-plugins want neither. VanGUI is not: it is linked into the SDK, since a mod that
-needs a settings panel should not have to find a build flag first.
-`mwon12_add_plugin(MyPlugin VANGFX MWSDK MyPlugin.cpp)`. VanGUI needs no keyword.
-
-VanHooks lives next door in `MWOn12/external/VanHooks/` as a prebuilt x86
-static-CRT package (`vanhooks.lib` + `Zydis.lib` + `Zycore.lib`). CMake finds it
-there or under this project, and disables hooking with a clear message if it or
-its Zydis libs are missing.
-
-`mwon12.h` is the single source of truth for the ABI. MWOn12 compiles this
-exact file; there is deliberately no second copy in the renderer's tree,
-because two copies drift and a plugin built against the wrong one is a crash
-rather than an error.
