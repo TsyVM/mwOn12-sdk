@@ -313,6 +313,7 @@ Tutorials/          four finished .asi mods, one idea each (see its README)
 shaderkit/          shader replacement — no compiler needed
 docs/               including the upstream README of each dependency
 ```
+<<<<<<< HEAD
 
 VanHooks, VanGFX, MWSDK and VanGUI are all part of the SDK. There is no
 keyword to find and no flag to turn on — `mwon12_add_plugin(MyPlugin
@@ -336,3 +337,5 @@ dropped, so a CMakeLists written against an earlier SDK keeps building.
 exact file; there is deliberately no second copy in the renderer's tree,
 because two copies drift and a plugin built against the wrong one is a crash
 rather than an error.
+=======
+>>>>>>> 59b8b7b91e35d22d857e0b4176d22e4aea960b81
