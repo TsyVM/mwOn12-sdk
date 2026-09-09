@@ -1,0 +1,49 @@
+// SPDX-License-Identifier: MIT
+//
+// mwsdk/game/mw05/Types/AudioSettings.h
+// ---------------------------------------------------------------------------
+// Reconstructed live-object layout for Need for Speed: Most Wanted (2005),
+// speed.exe v1.3. Community-reverse-engineered [reference]-confidence data,
+// re-expressed in MWSDK form under namespace mwsdk::mw05::rt.
+//
+// NOT part of MWSDK's verified core tables (mw05_db.inl / mw05_layouts.inl).
+// Member offsets are implied by declaration order and depend on target ABI;
+// treat addresses/offsets here as leads to confirm, not ground truth. See
+// mwsdk/game/mw05/README.md for provenance and the verified/reference split.
+// ---------------------------------------------------------------------------
+
+#ifndef MWSDK_MW05_RT_GAME_MW05_TYPES_AUDIOSETTINGS_H
+#define MWSDK_MW05_RT_GAME_MW05_TYPES_AUDIOSETTINGS_H
+#include "mwsdk/game/mw05/compat/prologue.hpp"
+#pragma once
+
+#include "mwsdk/game/mw05/Types.h"
+
+namespace mwsdk::mw05::rt {
+  struct AudioSettings {
+    float        MasterVol;
+    float        SpeechVol;
+    float        FEMusicVol;
+    float        IGMusicVol;
+    float        SoundEffectsVol;
+    float        EngineVol;
+    float        CarVol;
+    float        AmbientVol;
+    float        SpeedVol;
+    std::int32_t AudioMode;
+    std::int32_t InteractiveMusicMode;
+    std::int32_t EATraxMode;
+    std::int32_t PlayState;
+
+    inline float GetMasteredSpeechVol() { return SpeechVol * MasterVol; }
+    inline float GetMasteredFEMusicVol() { return FEMusicVol * MasterVol; }
+    inline float GetMasteredIGMusicVol() { return IGMusicVol * MasterVol; }
+    inline float GetMasteredSoundEffectsVol() { return SoundEffectsVol * MasterVol; }
+    inline float GetMasteredEngineVol() { return EngineVol * MasterVol; }
+    inline float GetMasteredCarVol() { return CarVol * MasterVol; }
+    inline float GetMasteredAmbientVol() { return AmbientVol * MasterVol; }
+    inline float GetMasteredSpeedVol() { return SpeedVol * MasterVol; }
+  };
+}  // namespace mwsdk::mw05::rt
+
+#endif  // MWSDK_MW05_RT_GAME_MW05_TYPES_AUDIOSETTINGS_H
