@@ -1,4 +1,24 @@
-# Writing a plugin
+<div align="center">
+
+# Writing a Plugin
+
+<p><em>From an empty file to a DLL the game loads</em></p>
+
+[![Type walkthrough](https://img.shields.io/badge/Type-walkthrough-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Language C++23](https://img.shields.io/badge/Language-C%2B%2B23-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Target x86](https://img.shields.io/badge/Target-x86-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Reference plugin-api.md](https://img.shields.io/badge/Reference-plugin-api.md-D2B48C?style=for-the-badge&labelColor=1C1008)](plugin-api.md)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+<br/>
+
+### Contents
+
+[0. Get the samples running first](#0-get-the-samples-running-first) · [1. A new plugin](#1-a-new-plugin) · [2. Drawing something](#2-drawing-something) · [3. Configuration](#3-configuration) · [4. Lifetime](#4-lifetime) · [5. Debugging](#5-debugging)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 A walkthrough. For the reference, see [plugin-api.md](plugin-api.md).
 
@@ -166,3 +186,13 @@ Attaching a debugger works normally: your plugin is an ordinary DLL. Break in
 
 Per-frame logging is a trap — 60 lines a second buries everything else. Rate
 limit it the way `FrameStats` does.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>

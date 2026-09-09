@@ -1,12 +1,32 @@
-# The game itself — MWSDK
+<div align="center">
+
+# The Game Itself
+
+<p><em>MWSDK — verified addresses, typed object views, live attributes</em></p>
+
+[![Library MWSDK](https://img.shields.io/badge/Library-MWSDK-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Game NFS:MW 2005 v1.3](https://img.shields.io/badge/Game-NFS:MW%202005%20v1.3-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Evidence verified RE](https://img.shields.io/badge/Evidence-verified%20RE-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Header mw05.hpp](https://img.shields.io/badge/Header-mw05.hpp-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+<br/>
+
+### Contents
+
+[Why it is worth using](#why-it-is-worth-using) · [What you get](#what-you-get) · [Rebasing: the one thing to get right](#rebasing-the-one-thing-to-get-right) · [Do not use MWSDK_MOD()](#do-not-use-mwsdkmod) · [Imported research](#imported-research) · [See also](#see-also)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 Everything else in this SDK is about Direct3D. MWSDK is about **Most Wanted**:
 where its functions and globals are, what its objects look like, and how to read
 its files.
 
-It ships prebuilt — headers in `include/mwsdk/`, the format parsers in
-`lib/mwsdk_data.lib` — and it is part of the SDK. There is no keyword and
-nothing to enable. Include a header and it works:
+It is vendored under `external/mwsdk/`, built for x86 alongside the rest, and
+part of the SDK — there is no keyword and nothing to enable. Include a header
+and it works:
 
 ```cpp
 #include <mwsdk/mwsdk.hpp>
@@ -15,7 +35,7 @@ nothing to enable. Include a header and it works:
 Build `samples/GameSdk` first — it logs the live vehicle list and changes
 nothing.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Why it is worth using
 
@@ -36,7 +56,7 @@ mw05::vehicle(car).top_speed() *= 1.1f;
 Every offset and address behind that is generated from verified
 reverse-engineering data, and traceable back to the evidence for it.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## What you get
 
@@ -56,7 +76,7 @@ reverse-engineering data, and traceable back to the evidence for it.
 | **The engine's hash** | `hash::attrib("default") == 0xEEC2271A`, compile-time. Every vault key, class name and car name is this hash. |
 | **File formats** | JDLZ, EAGL, TPK, geometry, vaults, scenery, triggers, traffic paths, collision — the offline half, usable from a plugin or a tool. |
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Rebasing: the one thing to get right
 
@@ -72,7 +92,7 @@ h.Install<Fn>(hooks::Abs(mw05::process().rebase(mw05::fn::SomeFunction)),
 `hooks::Rva()` on an address MWSDK rebased applies the image base twice and
 points at nothing. `Abs()` is the pairing.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Do not use `MWSDK_MOD()`
 
@@ -81,7 +101,7 @@ thread. That is right for a standalone `.asi` and wrong here: an MWOn12 plugin
 already has a lifecycle, and `OnPresent` is a per-frame clock on the render
 thread. Use `MWON12_PLUGIN` and MWSDK's *library*, never both entry points.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Imported research
 
@@ -100,10 +120,20 @@ mw05::db::research::patch::NOSTrailJumpSite // INSIDE a function; never call one
 Names there are labels built from the research's own descriptions, not recovered
 symbols.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## See also
 
 - **[hooking.md](hooking.md)** — installing the hook once MWSDK has told you where.
-- **[MWSDK-README.md](MWSDK-README.md)** — the full SDK, including the file formats.
-- **[MWSDK-FUNCTIONS.md](MWSDK-FUNCTIONS.md)** — the function reference.
+- **`external/mwsdk/MWSDK-README.md`** — the full SDK, including the file formats.
+- **`external/mwsdk/MWSDK-FUNCTIONS.md`** — the function reference.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>

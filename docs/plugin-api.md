@@ -1,10 +1,29 @@
-# Plugin API reference
+<div align="center">
+
+# Plugin API Reference
+
+<p><em>The callbacks, the structs, and what the renderer guarantees</em></p>
+
+[![Contract C ABI](https://img.shields.io/badge/Contract-C%20ABI-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![ABI version 1](https://img.shields.io/badge/ABI-version%201-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Source of truth mwon12.h](https://img.shields.io/badge/Source%20of%20truth-mwon12.h-D2B48C?style=for-the-badge&labelColor=1C1008)](../include/mwon12/mwon12.h)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+<br/>
+
+### Contents
+
+[How a plugin is found](#how-a-plugin-is-found) · [The entry point](#the-entry-point) · [Callbacks](#callbacks) · [Host services](#host-services) · [Versioning](#versioning) · [What this is not](#what-this-is-not)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 The contract is `include/mwon12/mwon12.h`. It is plain C, and it is the file
 both MWOn12 and your plugin compile — so if this document and that header ever
 disagree, the header is right.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## How a plugin is found
 
@@ -44,7 +63,7 @@ because a plugin project built with `/Gz` would otherwise hand back `__stdcall`
 pointers, and on x86 that mismatch corrupts the stack silently until it is
 fatal.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Callbacks
 
@@ -89,7 +108,7 @@ Writing one shared buffer every frame corrupts data the GPU is still reading,
 and does so intermittently — the worst way for that class of bug to present.
 `mwon12::Overlay` already does this; if you roll your own, do the same.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Host services
 
@@ -108,7 +127,7 @@ pointer.
 Use your **own** `[Section]` in `MWOn12.ini` rather than `[Renderer]`, so a
 user has one config file instead of one per plugin.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Versioning
 
@@ -123,7 +142,7 @@ about are already zero because MWOn12 zeroes the struct before the call.
 New fields are only ever **appended**. `MWON12_ABI_VERSION` is bumped only for
 a change that breaks a plugin built against the previous value.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## What this is not
 
@@ -135,3 +154,13 @@ saying so plainly.
 A misbehaving plugin costs its own features and a log warning. It never stops
 the game from starting: load failures, declines and ABI mismatches are all
 non-fatal by design.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>

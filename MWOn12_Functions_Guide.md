@@ -1,4 +1,19 @@
+<div align="center">
+
 # MWOn12 Functions Guide
+
+<p><em>Every function the SDK offers, with the signature you will actually type</em></p>
+
+[![Type reference](https://img.shields.io/badge/Type-reference-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Target x86](https://img.shields.io/badge/Target-x86-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Language C++23](https://img.shields.io/badge/Language-C%2B%2B23-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Walkthroughs docs/](https://img.shields.io/badge/Walkthroughs-docs/-D2B48C?style=for-the-badge&labelColor=1C1008)](docs/)
+[![Examples Tutorials/](https://img.shields.io/badge/Examples-Tutorials/-D2B48C?style=for-the-badge&labelColor=1C1008)](Tutorials/)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 Every function the SDK offers, in one place, with the signature you will
 actually type. The prose walkthroughs live in `docs/`; this is the reference you
@@ -20,7 +35,7 @@ together, see `Tutorials/` (four standalone `.asi` mods).
 | [The C ABI](#the-c-abi) | what the renderer actually passes |
 | [Build reference](#build-reference) | CMake, what needs a keyword |
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Plugin lifecycle
 
@@ -65,7 +80,7 @@ its per-frame upload buffers would be freeing memory the GPU was still reading.
 **Threading.** Callbacks arrive on the game's render thread and never
 concurrently with each other for the same plugin.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Host services
 
@@ -110,7 +125,7 @@ const MWOn12_Host* Host();        // the raw table, if you want it
 `OnDeviceCreated` will never fire. A plugin that only draws should decline from
 `OnLoad` rather than sit there doing nothing.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## ASI mods
 
@@ -156,7 +171,7 @@ MWOn12_UnregisterPlugin    /* void (void* user)           */
 MWOn12_GetHost             /* const MWOn12_Host* (void)   */
 ```
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Overlay
 
@@ -183,7 +198,7 @@ Coordinates are **pixels, origin top-left**. Colours are **`0xRRGGBBAA`**; alpha
 blends. `rtvFormat` must match `MWOn12_DeviceInfo::backBufferFormat` or the
 pipeline state is rejected at creation.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## User interface
 
@@ -243,7 +258,7 @@ Every path out of `OnPresent` after a `Begin()` that returned true must reach
 `End()`. An early return in between leaves a VanGUI frame open whose buffers
 are never handed back; the next `Begin()` closes it and says so in the log.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Hooking
 
@@ -331,7 +346,7 @@ if (auto addr = hooks::Scan("55 8B EC 83 EC ?? 56 8B F1"))
 
 See [docs/hooking.md](docs/hooking.md).
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Graphics
 
@@ -427,7 +442,7 @@ and return `ReadbackData` (pixels, width, height, format, row pitch) instead.
 See [docs/graphics.md](docs/graphics.md) and
 `external/vangfx/VanGFX_Functions_Guide.md`.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## The C ABI
 
@@ -458,7 +473,7 @@ Index per-frame resources by `frameSlot`, or you will overwrite memory the GPU
 is still reading — intermittently, which is the worst way for that bug to
 present.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Build reference
 
@@ -486,7 +501,7 @@ either way.
 `VANGFX`, `MWSDK` and `VANGUI` are still accepted as keywords and quietly
 dropped, so a CMakeLists written against an earlier SDK keeps working.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## See also
 
@@ -497,3 +512,13 @@ dropped, so a CMakeLists written against an earlier SDK keeps working.
   **[docs/hooking.md](docs/hooking.md)** · **[docs/graphics.md](docs/graphics.md)** ·
   **[docs/mwsdk.md](docs/mwsdk.md)**
 - **[shaderkit/README.md](shaderkit/README.md)** — replacing shaders with no code.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>

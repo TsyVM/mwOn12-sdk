@@ -1,4 +1,23 @@
-# Shader kit
+<div align="center">
+
+# Shader Kit
+
+<p><em>Replace the game's shaders with your own HLSL — no compiler, no C++</em></p>
+
+[![Code required none](https://img.shields.io/badge/Code%20required-none-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Language HLSL](https://img.shields.io/badge/Language-HLSL-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Enable ShaderMods=1](https://img.shields.io/badge/Enable-ShaderMods=1-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+<br/>
+
+### Contents
+
+[The workflow](#the-workflow) · [File names](#file-names) · [Finding the shader you want](#finding-the-shader-you-want) · [game-shader-sources/](#game-shader-sources) · [Notes](#notes)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 Replace the game's shaders with your own HLSL. No compiler, no C++, no build —
 edit a text file and restart the game.
@@ -7,7 +26,7 @@ This works because MWOn12 does not run the game's D3D9 shader bytecode. It
 translates each shader to HLSL and compiles that for D3D12. The shader-mod
 feature simply lets you supply the HLSL instead.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## The workflow
 
@@ -45,7 +64,7 @@ edit can never stop the game running:
 [shadermods] ps_2b91f0c4a17d3e05.hlsl failed to compile - the original is used
 ```
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## File names
 
@@ -73,7 +92,7 @@ the exact variant file first, then falls back to the name without `_v...`:
 Start with the generic name. Reach for a variant only when a change is right in
 one case and wrong in another.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Finding the shader you want
 
@@ -92,7 +111,7 @@ return float4(1, 0, 1, 1);
 
 Crude, and much faster than reading two hundred files.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## `game-shader-sources/`
 
@@ -115,7 +134,7 @@ here is usually what makes it make sense.
 | `particles.fx`, `shadowvolume.fx`, `ZPrePass_fx.h` | Effects and depth |
 | `global.h`, `shadowmap_fx*.h`, `auxiliarylighting*.h` | Shared includes |
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Notes
 
@@ -127,3 +146,13 @@ here is usually what makes it make sense.
   bypass the disk cache, so every shader is recompiled at each launch.
 - Distributing a shader mod means shipping the `.hlsl` files and telling people
   to put them in `<game>\MWOn12\Shaders\` with `ShaderMods=1`.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>

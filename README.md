@@ -1,9 +1,26 @@
+<div align="center">
+
 # MWOn12SDK
 
-Tools for modifying **Need for Speed: Most Wanted (2005)** running under
-[MWOn12](../MWOn12), the DirectX 9 → DirectX 12 renderer.
+<p><em>Tools for modifying Need for Speed: Most Wanted (2005) under MWOn12</em></p>
 
-These live here, and you can use any of them without the others:
+[![License: MIT](https://img.shields.io/badge/License-MIT-D2B48C?style=for-the-badge&labelColor=1C1008)](LICENSE.txt)
+[![C++23](https://img.shields.io/badge/C%2B%2B-23-D2B48C?style=for-the-badge&labelColor=1C1008&logo=cplusplus&logoColor=D2B48C)](https://en.cppreference.com/w/cpp/23)
+[![Windows](https://img.shields.io/badge/Windows-x86-D2B48C?style=for-the-badge&labelColor=1C1008&logo=windows&logoColor=D2B48C)](#-build)
+[![MWOn12](https://img.shields.io/badge/Renderer-MWOn12-D2B48C?style=for-the-badge&labelColor=1C1008)](../MWOn12)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+<br/>
+
+[![Stars](https://img.shields.io/github/stars/tsyvm/mwon12sdk?style=for-the-badge&color=D2B48C&labelColor=1C1008)](../../stargazers)
+[![Issues](https://img.shields.io/github/issues/tsyvm/mwon12sdk?style=for-the-badge&color=D2B48C&labelColor=1C1008)](../../issues)
+[![Last Commit](https://img.shields.io/github/last-commit/tsyvm/mwon12sdk?style=for-the-badge&color=D2B48C&labelColor=1C1008)](../../commits)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+Seven things live here, and **you can use any of them without the others**.
 
 | | What it is | Where |
 |---|---|---|
@@ -18,19 +35,27 @@ These live here, and you can use any of them without the others:
 The shader kit needs nothing from this folder but the instructions. Everything
 else needs Visual Studio.
 
-**[MWOn12_Functions_Guide.md](MWOn12_Functions_Guide.md)** is the one-page
-reference for all of it: every function, with signatures.
+> **[MWOn12_Functions_Guide.md](MWOn12_Functions_Guide.md)** is the one-page
+> reference for all of it: every function, with signatures.
 
----
+<div align="center">
 
-## Build
+### Contents
+
+[Build](#-build) · [Samples](#-try-the-samples) · [Tutorials](#-tutorials) · [Writing a plugin](#-writing-a-plugin) · [The one rule](#-the-one-rule-worth-reading-twice) · [Layout](#-layout) · [License](#-license)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+## 🛠️ Build
 
 ```bat
 Build.bat
 ```
 
-Visual Studio 2022 with the C++ workload. No DirectX SDK, no network, no
-package manager. Output:
+Visual Studio 2022 with the C++ workload. No DirectX SDK, no network, no package
+manager. Output:
 
 ```
 build_win32\Release\MWOn12SDK.lib
@@ -43,51 +68,51 @@ build_win32\bin\Plugins\GameSdk.dll           reads the live vehicle list via MW
 
 C++23, because VanHooks and VanGFX are both built on `std::expected`.
 
-Everything is **x86**, because `speed.exe` is 32-bit. A 64-bit plugin loads
-into nothing; CMake stops the build rather than letting you find that out from
-a silent failure at runtime.
+Everything is **x86**, because `speed.exe` is 32-bit. A 64-bit plugin loads into
+nothing; CMake stops the build rather than letting you find that out from a
+silent failure at runtime.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
-## Try the samples
+## 🚀 Try the samples
 
 1. Build MWOn12 and install `d3d9.dll` + `MWOn12.ini` next to `speed.exe`.
-2. Copy the sample DLLs into `<game>\MWOn12\Plugins\`, and
-   `HelloAsi.asi` into `<game>\scripts\`.
+2. Copy the sample DLLs into `<game>\MWOn12\Plugins\`, and `HelloAsi.asi` into
+   `<game>\scripts\`.
 3. Set `VerboseLog=1` in `MWOn12.ini` — plugin log output is Info level.
 4. Run the game and read `MWOn12-render.log`.
 
-`FrameStats` writes the frame rate to the log and draws nothing. Build it
-first: if its lines appear, your install is correct, and anything that goes
+**Build `FrameStats` first.** It writes the frame rate to the log and draws
+nothing: if its lines appear, your install is correct, and anything that goes
 wrong afterwards belongs to the next plugin rather than to the setup.
 
 `HelloOverlay` draws a framerate bar over the game using `mwon12::Overlay`.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
-## Tutorials
+## 🎓 Tutorials
 
 Where the samples exercise one API each, `Tutorials/` builds four small,
 finished mods — each a standalone **`.asi`** — around one thing MWOn12 lets you
 do to the game. They land in `bin/scripts/`; copy the ones you want into
 `<game>\scripts\`.
 
-```
-Tutorials/
-    01_ScreenFX/    a full-screen colour grade with an F12 menu   (Gui + Overlay)
-    02_NoCops/      stop the police spawning — a gameplay hook     (hooks + MWSDK)
-    03_SuperCars/   boost top speed on a key press                 (MWSDK views)
-    04_DrawFilter/  cull draws live from an F12 menu — the pipeline (Gui + VanGFX)
-```
+| Tutorial | What it does | Built on |
+|---|---|---|
+| **01_ScreenFX** | A full-screen colour grade with an F12 menu | Gui + Overlay |
+| **02_NoCops** | Stop the police spawning — a gameplay hook | hooks + MWSDK |
+| **03_SuperCars** | Boost top speed on a key press | MWSDK views |
+| **04_DrawFilter** | Cull draws live from an F12 menu — the pipeline | Gui + VanGFX |
 
 Two open a menu on **F12** (ScreenFX, DrawFilter); the other two read
 `MWOn12.ini` and a hotkey. Each `.cpp` starts with a full header comment, and
 **[Tutorials/README.md](Tutorials/README.md)** is the guided tour. They build
-with the SDK (`Build.bat`), or turn them off with `-DMWON12SDK_BUILD_TUTORIALS=OFF`.
+with the SDK (`Build.bat`), or turn them off with
+`-DMWON12SDK_BUILD_TUTORIALS=OFF`.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
-## Writing a plugin
+## 🔌 Writing a plugin
 
 A plugin is a 32-bit DLL in `<game>\MWOn12\Plugins\` exporting one function.
 With the C++ helpers that is:
@@ -120,8 +145,9 @@ private:
 MWON12_PLUGIN(MyPlugin)
 ```
 
-Add it to `samples/CMakeLists.txt` with `mwon12_add_plugin(MyPlugin
-MyPlugin/MyPlugin.cpp)`, or link `MWOn12SDK.lib` from your own project.
+Add it to `samples/CMakeLists.txt` with
+`mwon12_add_plugin(MyPlugin MyPlugin/MyPlugin.cpp)`, or link `MWOn12SDK.lib`
+from your own project.
 
 See **[docs/writing-a-plugin.md](docs/writing-a-plugin.md)** for the walkthrough,
 **[docs/plugin-api.md](docs/plugin-api.md)** for the callbacks in prose, and
@@ -175,8 +201,8 @@ void OnDeviceCreated(const MWOn12_DeviceInfo& d) override {
 void OnDeviceDestroyed() override { m_gfx.Detach(); }
 ```
 
-No keyword, no flag, nothing to enable — the graphics library is part of the
-SDK like everything else here:
+No keyword, no flag, nothing to enable — the graphics library is part of the SDK
+like everything else here:
 
 ```cmake
 mwon12_add_plugin(MyPlugin MyPlugin/MyPlugin.cpp)
@@ -185,17 +211,17 @@ mwon12_add_plugin(MyPlugin MyPlugin/MyPlugin.cpp)
 See **[docs/graphics.md](docs/graphics.md)**, and build `samples/VanGfxProbe`
 first — it attaches, counts what a frame is made of, and changes nothing.
 
-**Check the shader kit before reaching for this.** If what you want is to
-replace the game's shaders with your own HLSL, `shaderkit/` does it with a text
-editor, no C++ and no `dxcompiler.dll` to ship. This is for what that cannot do:
-reacting to draws, swapping shaders at runtime, reading the buffers behind a draw.
-
+> **Check the shader kit before reaching for this.** If what you want is to
+> replace the game's shaders with your own HLSL, `shaderkit/` does it with a
+> text editor, no C++ and no `dxcompiler.dll` to ship. This is for what that
+> cannot do: reacting to draws, swapping shaders at runtime, reading the buffers
+> behind a draw.
 
 ### Changing the game, not the picture at all
 
-**MWSDK** is a whole SDK for Most Wanted itself: verified function
-addresses, typed views over the game's objects, live attribute read/write, the
-engine's own string hash, and parsers for its file formats. It turns
+**MWSDK** is a whole SDK for Most Wanted itself: verified function addresses,
+typed views over the game's objects, live attribute read/write, the engine's own
+string hash, and parsers for its file formats. It turns
 
 ```cpp
 *reinterpret_cast<float*>(car + 0x1A4) *= 1.1f;    // a number nobody can check
@@ -218,8 +244,8 @@ which is the one thing to get right when combining it with `<mwon12/hooks.hpp>`.
 
 ### Something the player can actually use
 
-`mwon12::Overlay` draws rectangles. For anything with a control in it —
-a settings panel, a tuning slider, a debug view — `<mwon12/gui.hpp>` gives you
+`mwon12::Overlay` draws rectangles. For anything with a control in it — a
+settings panel, a tuning slider, a debug view — `<mwon12/gui.hpp>` gives you
 VanGUI, which is Dear ImGui's API under different names:
 
 ```cpp
@@ -263,10 +289,12 @@ once.
 
 See **[docs/asi.md](docs/asi.md)**.
 
-### The one rule worth reading twice
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
-Create GPU resources in `OnDeviceCreated`. Release **all** of them in
-`OnDeviceDestroyed`.
+## ⚠️ The one rule worth reading twice
+
+**Create GPU resources in `OnDeviceCreated`. Release all of them in
+`OnDeviceDestroyed`.**
 
 Not in the constructor: there is no D3D12 device when your plugin is loaded.
 Not after `OnDeviceDestroyed` returns: the device is destroyed immediately
@@ -275,14 +303,14 @@ live-object report — a crash on exit with no stack pointing at you.
 
 Releasing there is safe: the renderer waits for the GPU to go idle *before* it
 calls `OnDeviceDestroyed`. That guarantee is what makes the rule followable.
-D3D12 does not keep a resource alive because a submitted command list
-references it, so without the wait a plugin releasing its per-frame upload
-buffers would be freeing memory the GPU was still reading — and that corrupts
-intermittently, which is the worst way for a bug like it to present.
+D3D12 does not keep a resource alive because a submitted command list references
+it, so without the wait a plugin releasing its per-frame upload buffers would be
+freeing memory the GPU was still reading — and that corrupts intermittently,
+which is the worst way for a bug like it to present.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
-## Layout
+## 🗂️ Layout
 
 ```
 include/mwon12/
@@ -313,3 +341,46 @@ Tutorials/          four finished .asi mods, one idea each (see its README)
 shaderkit/          shader replacement — no compiler needed
 docs/               including the upstream README of each dependency
 ```
+
+VanHooks, VanGFX, MWSDK and VanGUI are all part of the SDK. There is no keyword
+to find and no flag to turn on — `mwon12_add_plugin(MyPlugin MyPlugin.cpp)` puts
+every header on the include path and every library on the link line.
+
+Two of them used to be opt-in, on the theory that a plugin should not pay for a
+library it does not use. **It does not pay for one.** The linker pulls object
+files out of a static library only when something references them, so a plugin
+that never names `vangfx::`, `mw05::` or `VanGui::` links none of that code:
+`FrameStats.dll` is byte-for-byte the same size with all four linked as with
+one, and imports `KERNEL32.dll` and nothing else either way. What opt-in did
+cost was somebody following a page like this one, writing the code it describes,
+and getting a screen of unresolved externals because the keyword is documented
+somewhere else.
+
+`VANGFX`, `MWSDK` and `VANGUI` are still accepted as keywords and quietly
+dropped, so a CMakeLists written against an earlier SDK keeps building.
+
+`mwon12.h` is the single source of truth for the ABI. MWOn12 compiles this exact
+file; there is deliberately no second copy in the renderer's tree, because two
+copies drift and a plugin built against the wrong one is a crash rather than an
+error.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+## 📄 License
+
+MWOn12SDK's own code is licensed under the MIT License — see
+[LICENSE.txt](LICENSE.txt).
+
+The four vendored dependencies are separate works under their own terms. VanGFX,
+MWSDK and VanGUI are MIT; **VanHooks is TeamVanilla's own and ships in binary
+form only**, as a prebuilt static library with a curated set of public API
+headers — it is not open source, and no source licence is granted or implied.
+The full breakdown is in [LICENSE.txt](LICENSE.txt).
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>

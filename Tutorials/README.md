@@ -1,4 +1,23 @@
+<div align="center">
+
 # MWOn12 Tutorials
+
+<p><em>Four finished mods, one idea each</em></p>
+
+[![Tutorials 4](https://img.shields.io/badge/Tutorials-4-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Format .asi](https://img.shields.io/badge/Format-.asi-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Build with the SDK](https://img.shields.io/badge/Build-with%20the%20SDK-D2B48C?style=for-the-badge&labelColor=1C1008)](../README.md)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+<br/>
+
+### Contents
+
+[Building](#building) · [Installing](#installing) · [The four, in a sentence each](#the-four-in-a-sentence-each) · [Going further](#going-further)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 Four small mods, each a single `.asi`, each about one thing you can do to
 *Need for Speed: Most Wanted (2005)* now that MWOn12 runs it on Direct3D 12.
@@ -26,7 +45,7 @@ prove that an `.asi` gets the D3D12 device exactly as a plugin does.
 Read them in order: 01 draws *over* the game, 04 reaches *inside* its rendering,
 and 02–03 leave the picture alone and change the game.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Building
 
@@ -63,7 +82,7 @@ Set `VerboseLog=1` in `MWOn12.ini` to see each mod's log lines in
 Every mod has its own `[Section]` in `MWOn12.ini` — see the header comment at
 the top of each `.cpp` for its keys.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## The four, in a sentence each
 
@@ -89,7 +108,7 @@ callback before the GPU sees it; a menu slider drops the ones above an index
 count, peeling the world away a layer at a time. This is the pipeline a real
 shader mod plugs into.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Going further
 
@@ -109,3 +128,13 @@ shader mod plugs into.
 
 Each tutorial's `.cpp` header comment is the long-form version of its row above;
 start there.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>

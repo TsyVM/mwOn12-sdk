@@ -1,13 +1,34 @@
-# Hooking and memory patching
+<div align="center">
+
+# Hooking and Patching
+
+<p><em>Reaching the game's own code — gameplay, physics, AI</em></p>
+
+[![Library VanHooks](https://img.shields.io/badge/Library-VanHooks-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Target x86](https://img.shields.io/badge/Target-x86-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Covers hook + patch + scan](https://img.shields.io/badge/Covers-hook%20%2B%20patch%20%2B%20scan-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Header hooks.hpp](https://img.shields.io/badge/Header-hooks.hpp-D2B48C?style=for-the-badge&labelColor=1C1008)](../include/mwon12/hooks.hpp)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+<br/>
+
+### Contents
+
+[Three things](#three-things) · [Fn is a function type, not a pointer](#fn-is-a-function-type-not-a-pointer) · [Addresses](#addresses) · [Why patterns beat addresses](#why-patterns-beat-addresses) · [Hooking an export by name](#hooking-an-export-by-name) · [Lifetime and threading](#lifetime-and-threading) · [When it fails](#when-it-fails) · [Patching code the game is running](#patching-code-the-game-is-running) · [What is underneath](#what-is-underneath)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 `<mwon12/hooks.hpp>` reaches the game's own code. The render hook in
 [plugin-api.md](plugin-api.md) reaches what the game *draws*; this reaches what
 it *does* — gameplay, physics, AI, handling, damage, HUD logic. None of that
 goes through Direct3D, so none of it is reachable any other way.
 
-Built on [VanHooks](#vanhooks), which is shipped prebuilt with the SDK.
+Everything here is part of the SDK and shipped prebuilt — there is nothing to
+fetch, build or opt into.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Three things
 
@@ -46,7 +67,7 @@ if (auto addr = hooks::Scan("55 8B EC 83 EC ?? 56 8B F1 D9 45 ??")) {
 }
 ```
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## `Fn` is a function type, not a pointer
 
@@ -61,7 +82,7 @@ using DamageFn = void(__fastcall*)(void*, void*, float);    // NO
 already a pointer and you have asked for a pointer to a pointer, and it will not
 compile. Declare the original as `DamageFn* g_orig`.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Addresses
 
@@ -82,7 +103,7 @@ what people actually type.
 
 Better still: don't depend on an address. Find it by pattern.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Why patterns beat addresses
 
@@ -107,7 +128,7 @@ Both default to searching `speed.exe`. Pass a module name to search elsewhere:
 hooks::Scan("AA BB 33 44", "MyPlugin.dll");
 ```
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Hooking an export by name
 
@@ -120,7 +141,7 @@ static SleepFn* g_origSleep = nullptr;
 m_hook.InstallApi<SleepFn>("kernel32.dll", "Sleep", &HookedSleep, &g_origSleep);
 ```
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Lifetime and threading
 
@@ -133,14 +154,14 @@ game is past its own startup and the code you are patching has settled.
 
 **Your detour runs on whichever thread called it** — for most game code, not the
 render thread. If it touches state your `OnPresent` also touches, that needs
-synchronising. Installing and removing are themselves thread-safe: VanHooks
-suspends other threads across the patch.
+synchronising. Installing and removing are themselves thread-safe: other
+threads are suspended across the patch.
 
 **Always call through the original** unless you genuinely mean to delete the
 function's behaviour. Forgetting is the most common way a hook "does nothing"
 and breaks something else.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## When it fails
 
@@ -159,7 +180,7 @@ Every failure is logged with a reason, at Warn or Error level, so it appears in
 `DebugLayer=1` does not help here — it only sees D3D12. Attach a debugger; your
 plugin is an ordinary DLL.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Patching code the game is running
 
@@ -171,29 +192,43 @@ busy, or hook the function instead of rewriting it.
 tail of one instruction decoding as garbage. Check the instruction length in a
 disassembler first.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
-## VanHooks
+## What is underneath
 
 The real work — decoding the target's prologue with a full disassembler,
 relocating the stolen bytes into a trampoline, suspending threads across the
-patch — is [VanHooks](https://www.teamvanilla.org/). The SDK ships it prebuilt:
+patch — is done by libraries the SDK ships prebuilt, as x86 and static-CRT to
+match MWOn12 and every plugin. Nothing needs fetching or building.
 
-```
-include/vanhooks/*.hpp      the library
-include/vh/*.hpp            the thin C++ wrappers over it
-lib/vanhooks.lib
-lib/Zydis.lib               ← the disassembler VanHooks decodes with
-lib/Zycore.lib
-```
+If they are missing from an install, CMake stops at configure time and names
+the file it wanted, rather than dropping hooking and letting the build fail
+later on symbols nobody recognises.
 
-All three libs are x86 and static-CRT, matching MWOn12 and every plugin.
-**Zydis and Zycore are not optional**: `vanhooks.lib` references them and does
-not contain them, so linking it alone fails on five unresolved Zydis symbols.
-CMake checks for all three and stops at configure time if one is missing,
-rather than letting the build fail later on symbols nobody recognises.
+`mwon12::hooks` covers hooking, patching and scanning, which is what almost
+every mod needs. More is available underneath, through VanHooks' own public
+header `<vh/vh.hpp>` — already on your include and link lines:
 
-`mwon12::hooks` covers hooking, patching and scanning. VanHooks itself does more
-— IAT and PLT hooks, vtable hooks, mid-function hooks, callstack tools. Include
-`<vanhooks/vanhooks.hpp>` directly to reach it; the SDK already puts it on your
-include and link lines.
+| | |
+|---|---|
+| `vh::inline_hook` | what `hooks::Hook::Install` is built on |
+| `vh::api_hook` | an export by module and name |
+| `vh::vtable_hook` | one slot of a COM or C++ vtable |
+| `vh::iat_hook` / `vh::plt_hook` | an import, before it is called |
+| `vh::mid_hook` | mid-function, with every register in a `MidContext` |
+| `vh::group` | install and lift a set of hooks as one unit |
+
+VanHooks ships **prebuilt, binary-only**: a static library plus that curated
+public header set. There is no source in this SDK and none is implied — see
+[LICENSE.txt](../LICENSE.txt). The public API is the supported surface; anything
+below it is not addressable from here and is not documented.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>

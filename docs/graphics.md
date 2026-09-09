@@ -1,4 +1,24 @@
-# Graphics and shaders
+<div align="center">
+
+# Graphics and Shaders
+
+<p><em>Three things are called a graphics mod, and they want three different tools</em></p>
+
+[![Library VanGFX](https://img.shields.io/badge/Library-VanGFX-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![API Direct3D 12](https://img.shields.io/badge/API-Direct3D%2012-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Shaders HLSL SM 6.0](https://img.shields.io/badge/Shaders-HLSL%20SM%206.0-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Header graphics.hpp](https://img.shields.io/badge/Header-graphics.hpp-D2B48C?style=for-the-badge&labelColor=1C1008)](../include/mwon12/graphics.hpp)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+<br/>
+
+### Contents
+
+[What it is](#what-it-is) · [The draws are MWOn12's, and that is the point](#the-draws-are-mwon12s-and-that-is-the-point) · [Lifetime](#lifetime) · [Threading](#threading) · [Compiling shaders](#compiling-shaders) · [Replacing a shader](#replacing-a-shader) · [When Attach returns false](#when-attach-returns-false) · [The graphics module](#the-graphics-module) · [See also](#see-also)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 Three different things are called "a graphics mod", and they want three
 different tools. Pick before you start — the wrong one costs a weekend.
@@ -15,12 +35,12 @@ files anyone can install. If that does what you want, stop reading here.
 
 This page is the third row.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## What it is
 
-`<mwon12/graphics.hpp>` attaches [VanGFX](#vangfx) to the D3D12 device MWOn12
-is rendering the game with. From there a plugin sees the frame being built:
+`<mwon12/graphics.hpp>` attaches the [graphics module](#the-graphics-module) to
+the D3D12 device MWOn12 is rendering the game with. From there a plugin sees the frame being built:
 every draw as it is recorded, every pipeline state as it is created, every
 resource as it appears — and can change or drop any of them.
 
@@ -43,10 +63,10 @@ class MyPlugin final : public mwon12::Plugin {
 ```
 
 `Attach` takes everything it needs from `MWOn12_DeviceInfo`. `m_gfx->` is the
-`vangfx::Context` itself, so the whole VanGFX API is reached through it and this
-header adds only a lifetime and a log route.
+`vangfx::Context` itself, so the whole interception API is reached through it
+and this header adds only a lifetime and a log route.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## The draws are MWOn12's, and that is the point
 
@@ -76,7 +96,7 @@ kit's magenta trick is the same idea from the other end and the two work well
 together: dump the shaders, colour one, and you have both the shader hash and
 the draw shape for the same object.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Lifetime
 
@@ -94,20 +114,20 @@ renderer expects rather than whenever the plugin object is freed.
 
 The same rule as everywhere else in this SDK, for the same reason.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Threading
 
 Callbacks arrive on the thread that made the D3D12 call. Under this game that is
 effectively always the render thread, so callbacks do not race each other.
 
-They are **not** the same call as `OnPresent`, and VanGFX does not serialise them
+They are **not** the same call as `OnPresent`, and they are not serialised
 against it. State shared between a draw callback and `OnPresent` needs its own
 lock, or an atomic — `samples/VanGfxProbe` uses atomics for exactly this.
 
 A callback runs inside the game's frame. Whatever it does is frame time.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Compiling shaders
 
@@ -136,7 +156,7 @@ compiler and takes milliseconds; doing it during a draw is a visible hitch.
 
 ### `dxcompiler.dll`
 
-Shader model 6.x compiles through DXC, which VanGFX loads with `LoadLibrary` at
+Shader model 6.x compiles through DXC, which is loaded with `LoadLibrary` at
 the moment you first compile something. It is not linked, so a plugin that never
 compiles a shader does not need it — but if it is absent when you do compile,
 the call fails with:
@@ -151,7 +171,7 @@ a stock Windows install. **A shader mod built this way has to ship
 built with the shader kit does not, because MWOn12 compiles those itself. That
 alone is a good reason to check the shader kit first.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Replacing a shader
 
@@ -307,7 +327,7 @@ m_gfx->on_draw([](vangfx::FrameContext& fc, vangfx::DrawEvent& ev) {
     if (!ev.d3d12_ib.bound || ev.index_count < 300) return;
 
     auto ref = fc.buffer_at(ev.d3d12_ib.view.gpu_virtual_address);
-    if (!ref) return;                    // not a buffer VanGFX saw created
+    if (!ref) return;                    // not a buffer the SDK saw created
 
     // ref.offset is where this draw's indices sit inside that buffer -- rarely
     // zero, because a game packs many meshes into one large buffer.
@@ -340,13 +360,13 @@ rather than pretending. On D3D9 a buffer created `D3DUSAGE_WRITEONLY` — which 
 most static geometry in a real game — cannot be read at all, and the error says
 so rather than returning bytes that are not its contents.
 
-None of that limits MWOn12, which is D3D12 throughout. It matters only if you
-use VanGFX elsewhere.
+None of that limits MWOn12, which is D3D12 throughout — the other two backends
+matter only if you use the graphics module outside this SDK.
 
-See [VanGFX-README.md](VanGFX-README.md) and
-[VanGFX_Functions_Guide.md](VanGFX_Functions_Guide.md) for the rest of the API.
+`external/vangfx/VanGFX_Functions_Guide.md` is the full reference for the
+interception API reached through `m_gfx->`.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## When Attach returns false
 
@@ -363,12 +383,12 @@ without graphics interception rather than treating it as fatal.
 The other reasons are logged with their cause: a `minShaderModel` the device
 cannot meet, or a vtable slot that could not be patched.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
-## VanGFX
+## The graphics module
 
-Shipped prebuilt as `lib/vangfx.lib` with its headers in `include/vangfx/`, and
-linked into every plugin. There is no keyword and nothing to enable:
+Built for x86 alongside the SDK and linked into every plugin. There is no
+keyword and nothing to enable:
 
 ```cmake
 mwon12_add_plugin(MyPlugin MyPlugin/MyPlugin.cpp)
@@ -379,7 +399,7 @@ files out of a static library only when something references them, so a plugin
 that never names `vangfx::` links none of it — `FrameStats.dll` is byte-for-byte
 the same size with this in the SDK as it was without.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## See also
 
@@ -391,3 +411,13 @@ the same size with this in the SDK as it was without.
   mod that is not rendering.
 - **`samples/VanGfxProbe`** — attaches, counts draws and PSOs, changes nothing.
   The thing to build first.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>

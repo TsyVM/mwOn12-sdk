@@ -1,4 +1,24 @@
-# A user interface — VanGUI
+<div align="center">
+
+# A User Interface
+
+<p><em>Checkboxes, sliders, tables and a demo window, over a running game</em></p>
+
+[![Library VanGUI](https://img.shields.io/badge/Library-VanGUI-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![API Dear ImGui style](https://img.shields.io/badge/API-Dear%20ImGui%20style-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Backends DX12 + Win32](https://img.shields.io/badge/Backends-DX12%20%2B%20Win32-D2B48C?style=for-the-badge&labelColor=1C1008)](#)
+[![Header gui.hpp](https://img.shields.io/badge/Header-gui.hpp-D2B48C?style=for-the-badge&labelColor=1C1008)](../include/mwon12/gui.hpp)
+[![TeamVanilla](https://img.shields.io/badge/Team-TeamVanilla-D2B48C?style=for-the-badge&labelColor=1C1008)](https://www.teamvanilla.org/)
+
+<br/>
+
+### Contents
+
+[The part that usually stops people](#the-part-that-usually-stops-people) · [Input](#input) · [Finding out what a widget is called](#finding-out-what-a-widget-is-called) · [From an ASI](#from-an-asi) · [DirectX 9](#directx-9) · [What is vendored](#what-is-vendored) · [See also](#see-also)
+
+</div>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 `mwon12::Overlay` draws rectangles. The moment a mod wants a checkbox, a slider,
 a colour picker or a list the user can scroll, it wants a UI toolkit.
@@ -20,7 +40,7 @@ out of a static library only when something references them, so a plugin that
 never names `VanGui::` links none of it — `FrameStats.dll` is byte-for-byte the
 same size with this in the SDK as it was without.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## The part that usually stops people
 
@@ -64,7 +84,7 @@ frame count all come out of it, so there is no size to keep in step by hand.
 **`Begin()` returning false means build nothing and do not call `End()`.** There
 is no frame to end, and VanGUI asserts if you end one it did not start.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Input
 
@@ -105,7 +125,7 @@ loaded after us may have subclassed the same window since, and restoring over
 it would cut it out of the chain — and leave it holding a pointer into a module
 that is about to unload.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## Finding out what a widget is called
 
@@ -117,7 +137,7 @@ Every control the library has, on screen, each next to the line of source that
 draws it. It is the fastest documentation there is, and `HelloGui` has a
 checkbox that opens it.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## From an ASI
 
@@ -134,7 +154,7 @@ different but the entry-point macro at the bottom. `HelloGui.dll` goes in
 toggles on HOME. Install both at once if you want to see the difference — the
 ASI loads before the game initialises.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## DirectX 9
 
@@ -159,7 +179,7 @@ VanGui_ImplDX9_RenderDrawData(VanGui::GetDrawData());     // after Render()
 That is real work, and it is the honest amount of work, rather than a helper
 pretending to a device it was never given.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## What is vendored
 
@@ -172,7 +192,7 @@ nothing to do with the plugin being built.
 Sources are copied verbatim. Anything that needs changing is changed upstream
 and re-copied.
 
----
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
 
 ## See also
 
@@ -183,3 +203,13 @@ and re-copied.
 - **[mwsdk.md](mwsdk.md)** — reading and writing the game state a panel shows.
 - **[VanGUI-README.md](VanGUI-README.md)** — the upstream README, for the widget
   set behind `VanGui::`.
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=0:1C1008,50:6B4226,100:1C1008&height=3"/>
+
+<div align="center">
+
+<sub>Built and maintained by <a href="https://github.com/TsyVM">TsyVM</a> · <a href="https://www.teamvanilla.org/">TeamVanilla</a></sub>
+
+<img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:6B4226,100:1C1008&height=80&section=footer"/>
+
+</div>
