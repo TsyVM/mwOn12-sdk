@@ -53,8 +53,15 @@ public:
     Overlay() = default;
     ~Overlay();
 
+    // Neither copyable nor movable. Every member below is a raw COM pointer
+    // this object releases in Shutdown(), so a copy would release each of them
+    // twice; and a move has to be spelled out to exist at all once the copy is
+    // deleted, so the deletion below is what stops one being written by
+    // accident later. Keep an Overlay as a member, or behind a unique_ptr.
     Overlay(const Overlay&)            = delete;
     Overlay& operator=(const Overlay&) = delete;
+    Overlay(Overlay&&)                 = delete;
+    Overlay& operator=(Overlay&&)      = delete;
 
     // `rtvFormat` must match the back buffer, which MWOn12_DeviceInfo reports
     // as backBufferFormat: a pipeline state whose render-target format differs

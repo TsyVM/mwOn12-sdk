@@ -2,10 +2,10 @@
 //
 // mwon12::Overlay draws rectangles. That is enough for a bar or a marker and
 // nothing else: the moment a mod wants a checkbox, a slider, a colour picker or
-// a list the user can scroll, it wants a UI toolkit.
+// a list the user can scroll, it wants a UI toolkit. The SDK has one.
 //
-// VanGUI is one. Standing it up on D3D12 by hand is the part that stops people:
-// a shader-visible descriptor heap for the font atlas, a Win32 message hook so
+// Standing a UI up on D3D12 by hand is the part that stops people: a
+// shader-visible descriptor heap for the font atlas, a Win32 message hook so
 // the mouse works, two backend lifecycles to start and stop in the right order,
 // and a NewFrame/Render pair that has to straddle the plugin's own callbacks.
 // None of it is specific to the mod being written. This class is that code,
@@ -32,15 +32,16 @@
 //         void OnDeviceDestroyed() override { m_gui.Shutdown(); }
 //     };
 //
-// Everything between Begin and End is ordinary VanGUI, which is Dear ImGui's
-// API under different names -- anything written for ImGui translates by
-// replacing `ImGui::` with `VanGui::`.
+// Everything between Begin and End is the widget API in the `VanGui` namespace:
+// windows, sliders, checkboxes, trees, tables, plots. `VanGui::ShowDemoWindow()`
+// puts every control on screen next to the source line that draws it, which is
+// the quickest way to find the one you want.
 //
 //
 // INPUT, AND THE ONE THING TO GET RIGHT
 //
 // A UI nobody can click is not a UI, so Init() subclasses the game's window to
-// feed VanGUI its input. That means the game and the UI are both reading the
+// feed the UI its input. That means the game and the UI are both reading the
 // same mouse, and a click on a button would also steer the car.
 //
 // WantsInput() is how you stop that: it is true when the pointer is over the UI
@@ -58,11 +59,12 @@
 // adapter. There is no D3D12 device in that case and no OnPresent, so this
 // class cannot help -- Init() returns false and says so in the log.
 //
-// The D3D9 backend is still built and shipped, because a mod that wants to
-// cover that case can use it directly: hook IDirect3DDevice9::Present yourself,
-// call VanGui_ImplDX9_Init(device) once and VanGui_ImplDX9_RenderDrawData()
-// each frame. That is real work, and it is the honest amount of work, rather
-// than this class pretending to a device it was never given.
+// A D3D9 renderer for the UI is still built and shipped, because a mod that
+// wants to cover that case can drive it directly: hook
+// IDirect3DDevice9::Present yourself, call VanGui_ImplDX9_Init(device) once and
+// VanGui_ImplDX9_RenderDrawData() each frame. That is real work, and it is the
+// honest amount of work, rather than this class pretending to a device it was
+// never given.
 
 #ifndef MWON12_GUI_HPP
 #define MWON12_GUI_HPP
@@ -83,8 +85,13 @@ public:
     Gui() = default;
     ~Gui();
 
+    // Neither copyable nor movable: it owns a descriptor heap, a UI context and
+    // a window subclass, and a static window procedure holds its address. Keep
+    // one as a member, or behind a unique_ptr.
     Gui(const Gui&)            = delete;
     Gui& operator=(const Gui&) = delete;
+    Gui(Gui&&)                 = delete;
+    Gui& operator=(Gui&&)      = delete;
 
     // Creates the context, both backends, the descriptor heap and the window
     // subclass. Everything comes out of MWOn12_DeviceInfo, so there is nothing
@@ -93,6 +100,16 @@ public:
     // Returns false and logs why on failure -- most often that MWOn12 is on its
     // D3D9 passthrough and there is no D3D12 device to draw with. Treat that as
     // "no UI", not as fatal.
+    //
+    // ONE PER PROCESS. A second Gui, in this plugin or another, is refused and
+    // says so in the log. This is not a policy: VanGUI addresses one current
+    // context through a global and neither of its backends can be initialised
+    // twice, so a second Gui would initialise its backends into the first
+    // one's context, overwrite the state pointers there, and leave whichever
+    // shuts down second freeing memory the first already freed.
+    //
+    // Two panels is a normal thing to want and needs no second Gui: open two
+    // VanGui::Begin/End blocks between this Gui's Begin() and End().
     bool Init(const MWOn12_DeviceInfo& info) noexcept;
 
     // Releases everything and puts the window procedure back. Must be called
@@ -104,7 +121,13 @@ public:
 
     // Starts a frame. Returns false when the UI is hidden or not initialised,
     // in which case build nothing and do not call End() -- there is no frame to
-    // end, and VanGUI asserts if you end one it did not start.
+    // end, and ending one that was not started is an assertion failure.
+    //
+    // When it returns true, every path out of OnPresent must reach End(). An
+    // early return in between leaves a VanGUI frame open, whose draw and
+    // vertex buffers are then never handed back; the next Begin() closes it
+    // and says so in the log, but the frame it closes is one frame's worth of
+    // leaked work either way.
     bool Begin(const MWOn12_Frame& frame) noexcept;
 
     // Finishes the frame and records its draw calls into the frame's command
@@ -124,7 +147,7 @@ public:
     // ── Input ───────────────────────────────────────────────────────────────
 
     // True when the UI is using the mouse or keyboard: the pointer is over a
-    // VanGUI window, or a text field has focus.
+    // UI window, or a text field has focus.
     [[nodiscard]] bool WantsInput() const noexcept;
 
     // Stop mouse and keyboard messages reaching the game while the UI wants
@@ -142,7 +165,7 @@ private:
     ID3D12DescriptorHeap* m_srvHeap{ nullptr };
     HWND      m_hwnd{ nullptr };
     WNDPROC   m_prevWndProc{ nullptr };
-    void*     m_context{ nullptr };   // VanGuiContext*, kept opaque here
+    void*     m_context{ nullptr };   // the UI context, kept opaque here
 
     bool m_ready{ false };
     bool m_frameStarted{ false };

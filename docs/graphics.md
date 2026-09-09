@@ -343,7 +343,8 @@ so rather than returning bytes that are not its contents.
 None of that limits MWOn12, which is D3D12 throughout. It matters only if you
 use VanGFX elsewhere.
 
-See `external/vangfx/VanGFX-README.md` for the rest of the API.
+See [VanGFX-README.md](VanGFX-README.md) and
+[VanGFX_Functions_Guide.md](VanGFX_Functions_Guide.md) for the rest of the API.
 
 ---
 
@@ -366,16 +367,17 @@ cannot meet, or a vtable slot that could not be patched.
 
 ## VanGFX
 
-Vendored under `external/vangfx/` and built for x86 alongside the SDK. Opt a
-plugin in with the `VANGFX` keyword — it is a large static library and most
-plugins have no use for it:
+Shipped prebuilt as `lib/vangfx.lib` with its headers in `include/vangfx/`, and
+linked into every plugin. There is no keyword and nothing to enable:
 
 ```cmake
-mwon12_add_plugin(MyPlugin VANGFX MyPlugin/MyPlugin.cpp)
+mwon12_add_plugin(MyPlugin MyPlugin/MyPlugin.cpp)
 ```
 
-`<mwon12/graphics.hpp>` needs that keyword. `<mwon12/plugin.hpp>` and
-`<mwon12/overlay.hpp>` do not.
+It costs nothing to a plugin that does not use it. The linker pulls object
+files out of a static library only when something references them, so a plugin
+that never names `vangfx::` links none of it — `FrameStats.dll` is byte-for-byte
+the same size with this in the SDK as it was without.
 
 ---
 

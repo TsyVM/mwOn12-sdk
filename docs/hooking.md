@@ -180,18 +180,18 @@ relocating the stolen bytes into a trampoline, suspending threads across the
 patch — is [VanHooks](https://www.teamvanilla.org/). The SDK ships it prebuilt:
 
 ```
-MWOn12/external/VanHooks/
-    include/vanhooks/*.hpp
-    libs/vanhooks.lib
-    libs/Zydis.lib          ← the disassembler VanHooks decodes with
-    libs/Zycore.lib
+include/vanhooks/*.hpp      the library
+include/vh/*.hpp            the thin C++ wrappers over it
+lib/vanhooks.lib
+lib/Zydis.lib               ← the disassembler VanHooks decodes with
+lib/Zycore.lib
 ```
 
 All three libs are x86 and static-CRT, matching MWOn12 and every plugin.
 **Zydis and Zycore are not optional**: `vanhooks.lib` references them and does
 not contain them, so linking it alone fails on five unresolved Zydis symbols.
-CMake checks for all three and disables hooking with a warning if any is
-missing.
+CMake checks for all three and stops at configure time if one is missing,
+rather than letting the build fail later on symbols nobody recognises.
 
 `mwon12::hooks` covers hooking, patching and scanning. VanHooks itself does more
 — IAT and PLT hooks, vtable hooks, mid-function hooks, callstack tools. Include

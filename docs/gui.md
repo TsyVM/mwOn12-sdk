@@ -3,8 +3,8 @@
 `mwon12::Overlay` draws rectangles. The moment a mod wants a checkbox, a slider,
 a colour picker or a list the user can scroll, it wants a UI toolkit.
 
-VanGUI is one, vendored under `external/vangui/` and **part of the SDK** — there
-is no keyword and nothing to enable. Include the header and it works:
+VanGUI is one, shipped as `lib/vangui.lib` and **part of the SDK** — there is
+no keyword and nothing to enable. Include the header and it works:
 
 ```cpp
 #include <mwon12/gui.hpp>
@@ -81,10 +81,29 @@ keyboard with `GetAsyncKeyState` or through DirectInput never looks at the
 message queue, and nothing done to that queue will stop it. **Most Wanted drives
 this way.** What this reliably fixes is the mouse and anything menu-driven.
 
-**Only one plugin per process can own the window.** The first `Gui` to `Init`
-takes it; a second draws but gets no input, and says so in the log. Two plugins
-subclassing the same window would chain their procedures in an order neither
-controls and unsubclass in an order that corrupts the chain.
+**Only one `Gui` per process.** The first to `Init` takes it; a second is
+refused outright and says so in the log.
+
+That is stronger than the window-subclassing problem it started as, and the
+reason is VanGUI rather than Win32. The widget API, both backends and the `IO`
+struct all address a single *current* context held in a global, and neither
+backend can be initialised twice — each stashes its state in that context's
+`BackendPlatformUserData` / `BackendRendererUserData`.
+`VanGui::CreateContext` restores the previously current context before
+returning, so a second `Gui`'s backends would initialise into the **first**
+`Gui`'s context, overwrite the two pointers there, and leave whichever shuts
+down second freeing memory the first already freed. It is a use-after-free that
+only shows up on exit.
+
+So the second `Init` returns false. Two panels in one process is a normal thing
+to want, and the way to have it is one `Gui` and two `VanGui::Begin`/`End`
+blocks — which is how a UI toolkit expects to be used anyway.
+
+The window subclass is a separate, weaker rule that still applies: `Shutdown`
+puts the game's procedure back only if the window still has ours. Something
+loaded after us may have subclassed the same window since, and restoring over
+it would cut it out of the chain — and leave it holding a pointer into a module
+that is about to unload.
 
 ---
 
@@ -162,3 +181,5 @@ and re-copied.
 - **[asi.md](asi.md)** — the ASI route, including the one-source-two-builds
   arrangement `HelloGui` uses.
 - **[mwsdk.md](mwsdk.md)** — reading and writing the game state a panel shows.
+- **[VanGUI-README.md](VanGUI-README.md)** — the upstream README, for the widget
+  set behind `VanGui::`.

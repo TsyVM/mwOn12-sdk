@@ -48,7 +48,12 @@ public:
         // There is no D3D12 device to draw with under the passthrough backend,
         // so there is nothing this plugin can do. Say so once and unload,
         // rather than sitting in memory checking a flag every frame.
-        if (mwon12::Host()->ActiveBackend() != MWON12_BACKEND_DX12) {
+        // mwon12::ActiveBackend(), not Host()->ActiveBackend(): the free
+        // function checks both the host table and the function pointer inside
+        // it, so a plugin that reaches OnLoad through a path where neither is
+        // set -- an ASI built from this file, most obviously -- gets an answer
+        // instead of a null dereference.
+        if (mwon12::ActiveBackend() != MWON12_BACKEND_DX12) {
             mwon12::LogInfo("HelloOverlay: not the DirectX 12 backend, "
                             "nothing to draw on");
             return false;

@@ -179,13 +179,31 @@ inline void Unregister(Plugin* self) noexcept
 #define MWON12_ASI(ClassName)                                                  \
     static DWORD WINAPI MWOn12_AsiThread(LPVOID)                               \
     {                                                                          \
-        auto* self = new ClassName();                                          \
-        if (!::mwon12::asi::Register(self)) {                                  \
-            /* No renderer, or it refused. The mod stays loaded: whatever it   \
-               does outside the frame callbacks still works. */                \
+        /* try/catch around the whole body, and nothrow on the allocation.     \
+           This is a thread procedure: an exception that reaches the top of it \
+           is not caught by anything, and the C++ runtime's response is        \
+           std::terminate -- the game closes with no message, and the ASI that \
+           did it is not named anywhere. A mod whose constructor reads a file  \
+           or builds a container can throw for entirely ordinary reasons. */   \
+        try {                                                                  \
+            auto* self = new (std::nothrow) ClassName();                       \
+            if (!self) {                                                       \
+                ::OutputDebugStringA(                                          \
+                    "[" #ClassName "] out of memory; not registering\n");      \
+                return 0;                                                      \
+            }                                                                  \
+            if (!::mwon12::asi::Register(self)) {                              \
+                /* No renderer, or it refused. Register() has already freed    \
+                   the object on every path that returns false. The mod stays  \
+                   loaded: whatever it does outside the frame callbacks still  \
+                   works. */                                                   \
+                ::OutputDebugStringA(                                          \
+                    "[" #ClassName "] MWOn12 not present; running without "    \
+                    "frame callbacks\n");                                      \
+            }                                                                  \
+        } catch (...) {                                                        \
             ::OutputDebugStringA(                                              \
-                "[" #ClassName "] MWOn12 not present; running without frame "  \
-                "callbacks\n");                                                \
+                "[" #ClassName "] threw while starting; not registering\n");   \
         }                                                                      \
         return 0;                                                              \
     }                                                                          \

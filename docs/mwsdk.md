@@ -4,11 +4,12 @@ Everything else in this SDK is about Direct3D. MWSDK is about **Most Wanted**:
 where its functions and globals are, what its objects look like, and how to read
 its files.
 
-It is vendored under `external/mwsdk/` and built for x86 alongside the rest. Opt
-a plugin in with the `MWSDK` keyword:
+It ships prebuilt — headers in `include/mwsdk/`, the format parsers in
+`lib/mwsdk_data.lib` — and it is part of the SDK. There is no keyword and
+nothing to enable. Include a header and it works:
 
-```cmake
-mwon12_add_plugin(MyPlugin MWSDK MyPlugin/MyPlugin.cpp)
+```cpp
+#include <mwsdk/mwsdk.hpp>
 ```
 
 Build `samples/GameSdk` first — it logs the live vehicle list and changes
@@ -16,7 +17,7 @@ nothing.
 
 ---
 
-## Why it is worth the keyword
+## Why it is worth using
 
 Reaching into the game without it looks like this:
 
@@ -104,5 +105,5 @@ symbols.
 ## See also
 
 - **[hooking.md](hooking.md)** — installing the hook once MWSDK has told you where.
-- **`external/mwsdk/MWSDK-README.md`** — the full SDK, including the file formats.
-- **`external/mwsdk/MWSDK-FUNCTIONS.md`** — the function reference.
+- **[MWSDK-README.md](MWSDK-README.md)** — the full SDK, including the file formats.
+- **[MWSDK-FUNCTIONS.md](MWSDK-FUNCTIONS.md)** — the function reference.

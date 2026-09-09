@@ -7,11 +7,11 @@ These live here, and you can use any of them without the others:
 
 | | What it is | Where |
 |---|---|---|
-| **Plugin SDK** | Write a DLL that MWOn12 loads and hands the live D3D12 device to, once per frame. C ABI, C++ helpers, a static library, working samples. | `include/`, `src/`, `samples/` |
+| **Plugin SDK** | Write a DLL that MWOn12 loads and hands the live D3D12 device to, once per frame. C ABI, C++ helpers, a static library, working samples. | `include/`, `lib/`, `samples/` |
 | **Hooking** | Reach the game's own code: hook functions, patch memory, scan for byte patterns. Gameplay, physics, AI — everything that never touches Direct3D. | `include/mwon12/hooks.hpp` |
 | **Shader kit** | Replace the game's shaders with your own HLSL. No code, no compiler — edit a text file and restart. | `shaderkit/` |
 | **Graphics** | See the frame being built: every draw, every pipeline state. Drop draws, swap shaders at runtime, read the buffers behind a draw. | `include/mwon12/graphics.hpp` |
-| **MWSDK** | The game itself rather than its rendering: verified addresses, typed object views, live attributes, and the file formats. | `external/mwsdk/` |
+| **MWSDK** | The game itself rather than its rendering: verified addresses, typed object views, live attributes, and the file formats. | `include/mwsdk/` |
 | **ASI mods** | MWOn12 loads `.asi` files too — the format most existing MW mods ship in. They load before the game initialises, and can still get the D3D12 device once per frame. | `include/mwon12/asi.hpp` |
 | **User interface** | Checkboxes, sliders, tables, a demo window. VanGUI is built into the SDK — no keyword — with a wrapper that does the descriptor heap, the window hook and the backend lifecycles for you. | `include/mwon12/gui.hpp` |
 
@@ -175,11 +175,11 @@ void OnDeviceCreated(const MWOn12_DeviceInfo& d) override {
 void OnDeviceDestroyed() override { m_gfx.Detach(); }
 ```
 
-Needs the `VANGFX` keyword, because VanGFX is a large static library and most
-plugins have no use for it:
+No keyword, no flag, nothing to enable — the graphics library is part of the
+SDK like everything else here:
 
 ```cmake
-mwon12_add_plugin(MyPlugin VANGFX MyPlugin/MyPlugin.cpp)
+mwon12_add_plugin(MyPlugin MyPlugin/MyPlugin.cpp)
 ```
 
 See **[docs/graphics.md](docs/graphics.md)**, and build `samples/VanGfxProbe`
@@ -193,7 +193,7 @@ reacting to draws, swapping shaders at runtime, reading the buffers behind a dra
 
 ### Changing the game, not the picture at all
 
-`external/mwsdk/` is a whole SDK for Most Wanted itself: verified function
+**MWSDK** is a whole SDK for Most Wanted itself: verified function
 addresses, typed views over the game's objects, live attribute read/write, the
 engine's own string hash, and parsers for its file formats. It turns
 
@@ -207,10 +207,10 @@ into
 mw05::vehicle(car).top_speed() *= 1.1f;
 ```
 
-Opt in with the `MWSDK` keyword, and build `samples/GameSdk` first:
+Nothing to opt into. Build `samples/GameSdk` first:
 
 ```cmake
-mwon12_add_plugin(MyPlugin MWSDK MyPlugin/MyPlugin.cpp)
+mwon12_add_plugin(MyPlugin MyPlugin/MyPlugin.cpp)
 ```
 
 See **[docs/mwsdk.md](docs/mwsdk.md)** — in particular the note on rebasing,
@@ -273,6 +273,13 @@ Not after `OnDeviceDestroyed` returns: the device is destroyed immediately
 afterwards, and anything still referencing it takes the process down with a
 live-object report — a crash on exit with no stack pointing at you.
 
+Releasing there is safe: the renderer waits for the GPU to go idle *before* it
+calls `OnDeviceDestroyed`. That guarantee is what makes the rule followable.
+D3D12 does not keep a resource alive because a submitted command list
+references it, so without the wait a plugin releasing its per-frame upload
+buffers would be freeing memory the GPU was still reading — and that corrupts
+intermittently, which is the worst way for a bug like it to present.
+
 ---
 
 ## Layout
@@ -286,9 +293,14 @@ include/mwon12/
     graphics.hpp    draw and pipeline interception, runtime shader replacement
     gui.hpp         VanGUI set up against MWOn12's device, in one call
     asi.hpp         registering an ASI with the renderer, so it can draw too
-src/
-    host.cpp        storage for the host table pointer
-    overlay.cpp     the overlay's D3D12 implementation
+include/            mwsdk/ vangfx/ vangui/ vangui_backends/ vanhooks/ vh/ —
+                    each dependency's own headers, already on the include path
+lib/                every dependency, prebuilt for x86 with the static CRT
+    MWOn12SDK.lib   the SDK itself, including mwon12::Gui and mwon12::Overlay
+    vanhooks.lib    hooking — with Zydis.lib and Zycore.lib, which it needs
+    vangfx.lib      draw and pipeline interception
+    mwsdk_data.lib  the game's file formats; the live runtime is header-only
+    vangui.lib      widgets, tables, the demo window
 samples/
     FrameStats/     logs the frame rate; draws nothing
     HelloOverlay/   draws a framerate bar
@@ -298,23 +310,27 @@ samples/
     HelloAsi/       an ASI that draws and reads game state
     HelloGui/       a UI panel — built as both a plugin and an ASI
 Tutorials/          four finished .asi mods, one idea each (see its README)
-external/
-    vangfx/         VanGFX source, built for x86 with the SDK
-    mwsdk/          MWSDK source — the game's addresses, layouts and formats
-    vangui/         VanGUI source — widgets, D3D12 + D3D9 + Win32 backends
 shaderkit/          shader replacement — no compiler needed
-docs/
+docs/               including the upstream README of each dependency
 ```
 
-VanGFX and MWSDK are opt-in per plugin, because neither is small and most
-plugins want neither. VanGUI is not: it is linked into the SDK, since a mod that
-needs a settings panel should not have to find a build flag first.
-`mwon12_add_plugin(MyPlugin VANGFX MWSDK MyPlugin.cpp)`. VanGUI needs no keyword.
+VanHooks, VanGFX, MWSDK and VanGUI are all part of the SDK. There is no
+keyword to find and no flag to turn on — `mwon12_add_plugin(MyPlugin
+MyPlugin.cpp)` puts every header on the include path and every library on the
+link line.
 
-VanHooks lives next door in `MWOn12/external/VanHooks/` as a prebuilt x86
-static-CRT package (`vanhooks.lib` + `Zydis.lib` + `Zycore.lib`). CMake finds it
-there or under this project, and disables hooking with a clear message if it or
-its Zydis libs are missing.
+Two of them used to be opt-in, on the theory that a plugin should not pay for a
+library it does not use. It does not pay for one. The linker pulls object files
+out of a static library only when something references them, so a plugin that
+never names `vangfx::`, `mw05::` or `VanGui::` links none of that code:
+`FrameStats.dll` is byte-for-byte the same size with all four linked as with
+one, and imports `KERNEL32.dll` and nothing else either way. What opt-in did
+cost was somebody following a page like this one, writing the code it
+describes, and getting a screen of unresolved externals because the keyword is
+documented somewhere else.
+
+`VANGFX`, `MWSDK` and `VANGUI` are still accepted as keywords and quietly
+dropped, so a CMakeLists written against an earlier SDK keeps building.
 
 `mwon12.h` is the single source of truth for the ABI. MWOn12 compiles this
 exact file; there is deliberately no second copy in the renderer's tree,

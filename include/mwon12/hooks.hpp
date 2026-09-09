@@ -273,10 +273,28 @@ inline bool Nop(uintptr_t address, size_t count, const char* what = nullptr) noe
 }
 
 // Reads `size` bytes. Empty on failure.
+//
+// Goes through ReadProcessMemory on this process rather than memcpy, which is
+// the difference between the documented behaviour and a crash. memcpy from an
+// address that is not mapped -- a pattern that matched nothing, an offset into
+// the wrong module, a pointer read one frame after the game freed it -- raises
+// an access violation inside a function marked noexcept, and the caller never
+// gets the empty vector this promises. ReadProcessMemory validates the range
+// in the kernel and returns false instead.
 [[nodiscard]] inline std::vector<uint8_t> Read(uintptr_t address, size_t size) noexcept
 {
-    std::vector<uint8_t> out(size);
-    std::memcpy(out.data(), reinterpret_cast<const void*>(address), size);
+    std::vector<uint8_t> out;
+    if (size == 0 || address == 0) return out;
+
+    out.resize(size);
+    SIZE_T got = 0;
+    if (!::ReadProcessMemory(::GetCurrentProcess(),
+                             reinterpret_cast<LPCVOID>(address),
+                             out.data(), size, &got) || got != size) {
+        LogWarn("read: %u bytes at 0x%08X could not be read",
+                unsigned(size), unsigned(address));
+        out.clear();
+    }
     return out;
 }
 
@@ -382,15 +400,27 @@ ScanAll(std::string_view pattern, const char* module = nullptr) noexcept
         reinterpret_cast<const IMAGE_NT_HEADERS*>(base + dos->e_lfanew);
     if (nt->Signature != IMAGE_NT_SIGNATURE) return hits;
 
-    const size_t plen = pp.bytes.size();
+    const size_t plen      = pp.bytes.size();
+    const size_t imageSize = nt->OptionalHeader.SizeOfImage;
+
     const IMAGE_SECTION_HEADER* sec = IMAGE_FIRST_SECTION(nt);
     for (unsigned s = 0; s < nt->FileHeader.NumberOfSections; ++s) {
         const IMAGE_SECTION_HEADER& sh = sec[s];
         if (sh.Characteristics & IMAGE_SCN_MEM_DISCARDABLE) continue;
         if (!(sh.Characteristics & IMAGE_SCN_MEM_READ))     continue;
 
-        const size_t vsize =
-            sh.Misc.VirtualSize ? sh.Misc.VirtualSize : sh.SizeOfRawData;
+        size_t vsize = sh.Misc.VirtualSize ? sh.Misc.VirtualSize
+                                           : sh.SizeOfRawData;
+
+        // Clamped to the mapped image. A section header is data from a file,
+        // and a VirtualAddress or VirtualSize reaching past SizeOfImage -- a
+        // packed or hand-edited executable, or simply a malformed one -- walks
+        // the loop off the end of the mapping and faults. Nothing here is
+        // worth crashing the game for.
+        if (sh.VirtualAddress >= imageSize) continue;
+        const size_t avail = imageSize - sh.VirtualAddress;
+        if (vsize > avail) vsize = avail;
+
         if (vsize < plen) continue;
 
         const uint8_t* start = base + sh.VirtualAddress;

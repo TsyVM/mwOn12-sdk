@@ -57,6 +57,11 @@ destroyed immediately afterwards, and anything still holding a reference takes
 the process down with a live-object report: a crash on exit with no stack
 pointing at you.
 
+Releasing in `OnDeviceDestroyed` is safe because the renderer waits for the GPU
+to go idle before calling it. D3D12 does not keep a resource alive because a
+submitted command list references it, so without that wait a plugin releasing
+its per-frame upload buffers would be freeing memory the GPU was still reading.
+
 **Threading.** Callbacks arrive on the game's render thread and never
 concurrently with each other for the same plugin.
 
@@ -216,12 +221,27 @@ is no frame to end, and VanGUI asserts if you end one it did not start.
 `VanGui::ShowDemoWindow(&open)` puts every widget the library has on screen next
 to the source line that draws it — the fastest documentation there is.
 
-Three things to know: only **one plugin per process** can own the window
-subclass (the first to `Init`; a second draws but gets no input and logs so);
-input blocking cannot stop a game reading the keyboard through `GetAsyncKeyState`
-or DirectInput, **which is how Most Wanted drives**; and on the D3D9 passthrough
-`Init` returns false because there is no D3D12 device — the D3D9 backend ships,
-but you would drive it yourself. See [docs/gui.md](docs/gui.md).
+Three things to know.
+
+**One `Gui` per process.** A second `Init` — in this plugin or another — is
+refused and logs why. VanGUI addresses a single current context through a
+global and neither of its backends can be initialised twice, so a second `Gui`
+would initialise its backends into the first one's context, overwrite the
+state pointers there, and leave whichever shuts down second freeing memory the
+first already freed. Two panels needs no second `Gui`: open two
+`VanGui::Begin`/`End` blocks between this `Gui`'s `Begin()` and `End()`.
+
+**Input blocking cannot stop a game reading the keyboard through
+`GetAsyncKeyState` or DirectInput**, which is how Most Wanted drives. What it
+reliably fixes is the mouse and anything menu-driven.
+
+**On the D3D9 passthrough `Init` returns false** because there is no D3D12
+device — the D3D9 backend ships, but you would drive it yourself. See
+[docs/gui.md](docs/gui.md).
+
+Every path out of `OnPresent` after a `Begin()` that returned true must reach
+`End()`. An early return in between leaves a VanGUI frame open whose buffers
+are never handed back; the next `Begin()` closes it and says so in the log.
 
 ---
 
@@ -316,12 +336,7 @@ See [docs/hooking.md](docs/hooking.md).
 ## Graphics
 
 `<mwon12/graphics.hpp>`. Attaches VanGFX to the D3D12 device MWOn12 renders
-with. **Needs the `VANGFX` keyword** — it is a large static library and most
-plugins have no use for it.
-
-```cmake
-mwon12_add_plugin(MyPlugin VANGFX MyPlugin/MyPlugin.cpp)
-```
+with. No keyword and nothing to enable — VanGFX is part of the SDK.
 
 ### Context
 
@@ -448,23 +463,28 @@ present.
 ## Build reference
 
 ```cmake
-mwon12_add_plugin(Name [VANGFX] [MWSDK] sources...)   # -> bin/Plugins/Name.dll
-mwon12_add_asi   (Name [VANGFX] [MWSDK] sources...)   # -> bin/scripts/Name.asi
+mwon12_add_plugin(Name sources...)   # -> bin/Plugins/Name.dll
+mwon12_add_asi   (Name sources...)   # -> bin/scripts/Name.asi
 ```
 
-| header | keyword | why |
-|---|---|---|
-| `plugin.hpp`, `overlay.hpp`, `asi.hpp`, `gui.hpp` | none | part of the SDK |
-| `hooks.hpp` | none | VanHooks is prebuilt and always linked when found |
-| `graphics.hpp` | **`VANGFX`** | a large static library most plugins never use |
-| `<mwsdk/...>` | **`MWSDK`** | the game's addresses, layouts and file formats |
+There are no keywords. Every header below is on the include path of every
+plugin, and every library behind it is on the link line:
 
-VanGUI needs no keyword: it is compiled into `MWOn12SDK.lib`, and it costs
-nothing to a plugin that does not reference it — the linker takes only what is
-used, and `FrameStats.dll` is byte-for-byte the same size either way.
+| header | what it brings |
+|---|---|
+| `plugin.hpp`, `overlay.hpp`, `asi.hpp` | the SDK itself |
+| `gui.hpp` | VanGUI — widgets, tables, plots, the demo window |
+| `hooks.hpp` | VanHooks — hooking, patching, pattern scanning |
+| `graphics.hpp` | VanGFX — draw and pipeline interception |
+| `<mwsdk/...>` | MWSDK — the game's addresses, layouts and file formats |
 
-`VANGUI` is still accepted and ignored, so a CMakeLists written against an
-earlier SDK keeps working.
+None of it costs a plugin that does not use it. The linker takes only what is
+referenced, so `FrameStats.dll` is byte-for-byte the same size with all four
+libraries linked as with one, and imports `KERNEL32.dll` and nothing else
+either way.
+
+`VANGFX`, `MWSDK` and `VANGUI` are still accepted as keywords and quietly
+dropped, so a CMakeLists written against an earlier SDK keeps working.
 
 ---
 

@@ -41,6 +41,15 @@
  * immediately afterwards, and anything still holding a reference to it takes
  * the process down with a live-object report.
  *
+ * The renderer waits for the GPU to go idle BEFORE calling OnDeviceDestroyed,
+ * so releasing there is safe. That guarantee is what makes the rule above
+ * followable: D3D12 does not keep a resource alive because a submitted command
+ * list references it, so a plugin releasing its per-frame upload buffers while
+ * the GPU still had frames in flight would be freeing memory the GPU is
+ * reading. There is no open command list at that point -- the frame's list
+ * belongs to OnPresent -- so there is nothing left to record and nothing lost
+ * by the wait.
+ *
  *
  * VERSIONING
  *
