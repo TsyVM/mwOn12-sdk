@@ -313,29 +313,3 @@ Tutorials/          four finished .asi mods, one idea each (see its README)
 shaderkit/          shader replacement — no compiler needed
 docs/               including the upstream README of each dependency
 ```
-<<<<<<< HEAD
-
-VanHooks, VanGFX, MWSDK and VanGUI are all part of the SDK. There is no
-keyword to find and no flag to turn on — `mwon12_add_plugin(MyPlugin
-MyPlugin.cpp)` puts every header on the include path and every library on the
-link line.
-
-Two of them used to be opt-in, on the theory that a plugin should not pay for a
-library it does not use. It does not pay for one. The linker pulls object files
-out of a static library only when something references them, so a plugin that
-never names `vangfx::`, `mw05::` or `VanGui::` links none of that code:
-`FrameStats.dll` is byte-for-byte the same size with all four linked as with
-one, and imports `KERNEL32.dll` and nothing else either way. What opt-in did
-cost was somebody following a page like this one, writing the code it
-describes, and getting a screen of unresolved externals because the keyword is
-documented somewhere else.
-
-`VANGFX`, `MWSDK` and `VANGUI` are still accepted as keywords and quietly
-dropped, so a CMakeLists written against an earlier SDK keeps building.
-
-`mwon12.h` is the single source of truth for the ABI. MWOn12 compiles this
-exact file; there is deliberately no second copy in the renderer's tree,
-because two copies drift and a plugin built against the wrong one is a crash
-rather than an error.
-=======
->>>>>>> 59b8b7b91e35d22d857e0b4176d22e4aea960b81
